@@ -1,0 +1,33 @@
+# NASM assembly compilation and link rules.
+#
+# Note that we are modeling this after the cc module to provide a familiar
+# interface (options, target types) and to integrate with the existing linking
+# machinery.
+
+import! nasm = nasm%exe{nasm}
+
+define asm: file
+asm{*}: extension = asm
+
+nasm.poptions = [strings]
+nasm.coptions = [strings]
+
+[rule_name=nasm.compile.obje] obje{~'/(.+)/'}: asm{~'/(.+)/'} $nasm
+% update clean
+recipe c++ compile-asm.cxx
+
+[rule_name=nasm.compile.obja] obja{~'/(.+)/'}: asm{~'/(.+)/'} $nasm
+% update clean
+recipe c++ compile-asm.cxx
+
+[rule_name=nasm.compile.objs] objs{~'/(.+)/'}: asm{~'/(.+)/'} $nasm
+% update clean
+recipe c++ compile-asm.cxx
+
+[rule_name=nasm.link.lib] lib{~'/(.+)/'}: asm{~'/(.+)/'}
+% update clean
+recipe c++ link-asm.cxx
+
+[rule_name=nasm.link.exe] exe{~'/(.+)/'}: asm{~'/(.+)/'}
+% update clean
+recipe c++ link-asm.cxx
